@@ -1,0 +1,14 @@
+# ocaml
+_build
+*.cmo
+*.cma
+*.cmax
+*.native
+*.byte
+
+# emacs
+.#*
+
+# vim
+*~
+*.swp
