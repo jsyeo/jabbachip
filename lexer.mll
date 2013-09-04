@@ -1,6 +1,7 @@
 {
 open Parser
 open Lexing
+open Printf
 
 exception SyntaxError of string
 
@@ -10,9 +11,9 @@ let next_line lexbuf =
     { pos with pos_bol = lexbuf.lex_curr_pos;
                pos_lnum = pos.pos_lnum + 1}
 
-let create_hashtable ~size ~initial_list =
+let create_hashtable size initial_list =
   let tbl = Hashtbl.create size in
-  List.iter (fun (key, data) -> Hashtbl.add key data) initial_list;
+  List.iter (fun (key, data) -> Hashtbl.add tbl key data) initial_list;
   tbl
 
 let keyword_table =
@@ -34,10 +35,10 @@ let id = ['a'-'z']['a'-'z' 'A'-'Z' '0'-'9' '_']*
 let white = [' ' '\t']+
 let newline = '\r' | '\n' | "\r\n"
 
-rule read =
+rule token =
   parse
-  | white         { read lexbuf}
-  | newline       { next_line lexbuf; read lexbuf}
+  | white         { token lexbuf}
+  | newline       { next_line lexbuf; token lexbuf}
   | int           { INT (int_of_string (Lexing.lexeme lexbuf))}
   | cname as word { CNAME word }
   | id as word
@@ -80,7 +81,9 @@ and read_string buf =
   parse
   | '"'         { STRING (Buffer.contents buf) }
   | '\\' '/'    {Buffer.add_char buf '/'; read_string buf lexbuf}
-  | '\\' '\\'   {Buffer.add_char buf '\\'; read_string buf lexbuf}
+  | '\\' '\\'   {Buffer.add_char buf 
+
+'\\'; read_string buf lexbuf}
   | '\\' 'b'    {Buffer.add_char buf '\b'; read_string buf lexbuf}
   | '\\' 'f'    {Buffer.add_char buf '\012'; read_string buf lexbuf}
   | '\\' 'n'    {Buffer.add_char buf '\n'; read_string buf lexbuf}

@@ -1,0 +1,2 @@
+all:
+	./jabbachipbuild main.native

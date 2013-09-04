@@ -5,7 +5,7 @@ type jlite_type =
   | BoolT
   | StringT
   | ObjectT of class_name
-  | Void T
+  | VoidT
   | Unknown
 
 type jlite_op =
@@ -16,30 +16,30 @@ type jlite_op =
 
 type var_id =
   | SimpleVarId of string
-  | TypedVarId of typed_var_id
+  | TypedVarId of string
 
-type jlite_exp =
-  | UnaryExp of jlite_op * jlite_exp
-  | BinaryExp of jlite_op * jlite_exp * jlite_exp
-  | FieldAccess of jlite_exp * var_id
+type jlite_expr =
+  | UnaryExpr of jlite_op * jlite_expr
+  | BinaryExpr of jlite_op * jlite_expr * jlite_expr
+  | FieldAccess of jlite_expr * var_id
   | ObjectCreate of class_name
-  | MdCall of jlite_exp * (jlite_exp list)
+  | MdCall of jlite_expr * (jlite_expr list)
   | BoolLiteral of bool
   | IntLiteral of int
-  | StringLiteral of int
+  | StringLiteral of string
   | ThisWord
   | NullWord
   | Var of var_id
-  | TypedExp of jlite_exp * jlite_type
+  | TypedExpr of jlite_expr * jlite_type
 and jlite_stmt =
-  | IfStmt of jlite_exp * (jlite_stmt list) * (jlite_stmt list)
-  | WhileStmt of jlite_exp * (jlite_stmt list)
+  | IfStmt of jlite_expr * (jlite_stmt list) * (jlite_stmt list)
+  | WhileStmt of jlite_expr * (jlite_stmt list)
   | ReadStmt of var_id
-  | PrintStmt of jlite_exp
-  | AssignStmt of var_id * jlite_exp
-  | AssignFieldStmt of jlite_exp * jlite_exp
-  | MdCallStmt of jlite_exp
-  | ReturnStmt of jlite_exp
+  | PrintStmt of jlite_expr
+  | AssignStmt of var_id * jlite_expr
+  | AssignFieldStmt of jlite_expr * jlite_expr
+  | MdCallStmt of jlite_expr
+  | ReturnStmt of jlite_expr
   | ReturnVoidStmt
 
 type var_decl = jlite_type * var_id

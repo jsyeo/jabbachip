@@ -1,3 +1,5 @@
+open Types
+
 let string_of_jlite_type ty = ""
 
 let string_of_jlite_op op = ""
@@ -6,7 +8,7 @@ let string_of_var_id id = ""
 
 let string_of_jlite_expr expr =
   match expr with
-  | IntLiteral i -> string_of_int i
+  | Types.IntLiteral i -> string_of_int i
   | _ -> failwith "OOPS"
 
 let string_of_jlite_stmt stmt = ""
