@@ -8,6 +8,6 @@ let parse =
   try
     let ast = Parser.prog (Lexer.token) lexbuf in
     close_in channelf;
-    print_string (string_of_jlite_expr ast)
+    print_endline (string_of_list string_of_jlite_stmt ast)
   with
     End_of_file -> exit 0

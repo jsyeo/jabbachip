@@ -24,7 +24,10 @@ let keyword_table =
     ("while", WHILE);
     ("return", RETURN);
     ("this", THIS);
-    ("new", NEW)
+    ("new", NEW);
+    ("null", NULL);
+    ("println", PRINTLN);
+    ("readln", READLN)
   ]
 }
 
@@ -41,6 +44,8 @@ rule token =
   | newline       { next_line lexbuf; token lexbuf}
   | int           { INT (int_of_string (Lexing.lexeme lexbuf))}
   | cname as word { CNAME word }
+  | "false"       { FALSE }
+  | "true"        { TRUE }
   | id as word
       { try
           let token = Hashtbl.find keyword_table word in
@@ -50,8 +55,6 @@ rule token =
           printf "identifier: %s\n" word;
           ID word
       }
-  | "true"        { TRUE }
-  | "false"       { FALSE }
   | '"'           { read_string (Buffer.create 17) lexbuf}
   | "<"           { LT }
   | ">"           { GT }
@@ -59,11 +62,12 @@ rule token =
   | ">="          { GTEQ }
   | "=="          { EQ }
   | "!="          { NOTEQ }
+  | "!"           { BOOL_NEGATE }
   | '+'           { PLUS }
   | '-'           { MINUS }
   | '*'           { MULTIPLY }
   | '/'           { DIVIDE }
-  | '='           { ASSSIGN }
+  | '='           { ASSIGN }
   | '{'           { LEFT_BRACE }
   | '}'           { RIGHT_BRACE }
   | '('           { LEFT_PAREN }
@@ -72,6 +76,7 @@ rule token =
   | ']'           { LEFT_BRACK }
   | ';'           { SEMICOLON }
   | ','           { COMMA }
+  | '.'           { DOT }
   | "&&"          { AND }
   | "||"          { OR }
   | _             { raise (SyntaxError ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
