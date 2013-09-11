@@ -61,6 +61,8 @@ stmt:
  | PRINTLN LEFT_PAREN expr RIGHT_PAREN SEMICOLON    { PrintStmt($3) }
  | field ASSIGN expr SEMICOLON                      { AssignFieldStmt($1, $3) }
  | mdcall SEMICOLON                                 { MdCallStmt($1) }
+ | RETURN expr SEMICOLON                            { ReturnStmt($2) }
+ | RETURN SEMICOLON                                 { ReturnVoidStmt }
 
 field:
  | atom DOT ID                 { FieldAccess($1, SimpleVarId($3)) }

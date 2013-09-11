@@ -48,6 +48,8 @@ let rec string_of_jlite_stmt stmt =
     (string_of_list string_of_jlite_stmt stmts_else)
   | MdCallStmt(expr) -> Printf.sprintf "MdCallStmt(%s)" (string_of_jlite_expr expr)
   | AssignFieldStmt(expr1, expr2) -> Printf.sprintf "AssignFieldStmt(%s,%s)" (string_of_jlite_expr expr1) (string_of_jlite_expr expr2)
+  | ReturnStmt(expr) -> Printf.sprintf "ReturnStmt(%s)" (string_of_jlite_expr expr)
+  | ReturnVoidStmt -> "ReturnVoidStmt"
   | _ -> failwith "string_of_jlite_stmt: OOPS"
 
 let string_of_var_decl var_decl = ""
