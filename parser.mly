@@ -71,13 +71,12 @@ mdcall:
  | atom LEFT_PAREN exprlist RIGHT_PAREN { MdCall($1, $3) }
 
 atom:
- | field                       { $1 }
- | mdcall                      { $1 }
- | THIS                        { ThisWord }
- | NEW CNAME                   { ObjectCreate($2) }
- | ID                          { Var(SimpleVarId($1)) }
- | LEFT_PAREN expr RIGHT_PAREN { $2 }
- | NULL                        { NullWord }
+ | field                            { $1 }
+ | mdcall                           { $1 }
+ | THIS                             { ThisWord }
+ | ID                               { Var(SimpleVarId($1)) }
+ | NEW CNAME LEFT_PAREN RIGHT_PAREN { ObjectCreate($2) }
+ | NULL                             { NullWord }
 
 exprlist:
  | { [] }
@@ -105,8 +104,7 @@ expr:
  | BOOL_NEGATE expr               { UnaryExpr(BooleanOp("!"), $2) }
  | TRUE                           { BoolLiteral true }
  | FALSE                          { BoolLiteral false }
- | ID                             { Var(SimpleVarId($1)) }
  | INT                            { IntLiteral $1 }
  | STRING                         { StringLiteral $1 }
-
+ | atom                           { $1 }
 %%

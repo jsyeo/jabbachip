@@ -35,7 +35,10 @@ let rec string_of_jlite_expr expr =
   | FieldAccess(expr, id) ->
     Printf.sprintf "FieldAccess(%s, %s)" (string_of_jlite_expr expr) (string_of_var_id id)
   | MdCall(expr, expr_lst) -> Printf.sprintf "MdCall(%s, %s)" (string_of_jlite_expr expr) (string_of_list string_of_jlite_expr expr_lst)
-  | _ -> failwith "string_of_jlite_expr: OOPS"
+  | ObjectCreate(cls_name) -> Printf.sprintf "ObjectCreate(%s)" cls_name
+  | ThisWord -> "ThisWord"
+  | NullWord -> "NullWord"
+  | _ -> failwith "string_of_jlite_expr: OOPS! no match!"
 
 let rec string_of_jlite_stmt stmt =
   match stmt with
