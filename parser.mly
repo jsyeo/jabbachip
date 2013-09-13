@@ -4,9 +4,8 @@
   module AST = Types
 %}
 
-%token CLASS IF ELSE WHILE RETURN THIS NEW NULL PRINTLN READLN
-
-%token INT BOOL STRING VOID
+%token CLASS IF ELSE WHILE RETURN THIS NEW NULL PRINTLN READLN MAIN
+%token INT_TYPE BOOL_TYPE STRING_TYPE VOID_TYPE
 
 %token <int> INT
 %token <string> STRING
@@ -31,14 +30,69 @@
 %left PLUS MINUS
 %left MULTIPLY DIVIDE
 %right NEGATE BOOL_NEGATE
+%nonassoc SEMICOLON
 /* highest precedence */
 
 %start prog
-%type <Types.jlite_stmt list> prog
+%type <Types.jlite_program> prog
 %%
 
 prog:
- | stmtlist EOF   { $1 }
+ | main_class_decl class_decl_list EOF   { ($1, $2) }
+
+class_decl_list:
+ | { [] }
+ | class_decl class_decl_list { $1 :: $2 }
+
+main_class_decl:
+ | CLASS CNAME LEFT_BRACE main_md_decl RIGHT_BRACE
+     { ($2, $4) }
+
+main_md_decl:
+ | VOID_TYPE MAIN LEFT_PAREN params_list RIGHT_PAREN
+     LEFT_BRACE var_decllist nonempty_stmtlist RIGHT_BRACE
+     { { jliteid = SimpleVarId("main");
+         ir3id = SimpleVarId("main");
+         rettype = VoidT;
+         params = $4;
+         localvars = $7;
+         stmts = $8 } }
+
+class_decl:
+ | CLASS CNAME LEFT_BRACE var_decllist md_decllist RIGHT_BRACE
+     { ($2, $4, $5) }
+
+md_decllist:
+ | { [] }
+ | md_decl md_decllist
+     { $1 :: $2 }
+
+md_decl:
+ | j_type ID LEFT_PAREN params_list RIGHT_PAREN
+     LEFT_BRACE var_decllist nonempty_stmtlist RIGHT_BRACE
+     { { jliteid = SimpleVarId($2);
+         ir3id = SimpleVarId($2);
+         rettype = $1;
+         params = $4;
+         localvars = $7;
+         stmts = $8 } }
+
+params_list:
+ | { [] }
+ | j_type ID                   { [($1, SimpleVarId($2))] }
+ | j_type ID COMMA params_list { ($1, SimpleVarId($2)) :: $4 }
+
+var_decllist:
+ | { [] }
+ | var_decllist j_type ID SEMICOLON
+     { $1 @ [($2, SimpleVarId($3))] }
+
+j_type:
+ | INT_TYPE    { IntT }
+ | STRING_TYPE { StringT }
+ | BOOL_TYPE   { BoolT }
+ | VOID_TYPE   { VoidT }
+ | CNAME       { ObjectT($1) }
 
 stmtlist:
  | { [] }

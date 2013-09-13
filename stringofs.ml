@@ -9,7 +9,14 @@ let rec string_of_list pr lst =
       | (x::xs) -> pr x ^ "; " ^ string_of_list pr xs
     end
 
-let string_of_jlite_type ty = ""
+let string_of_jlite_type ty =
+  match ty with
+  | IntT -> "IntT"
+  | BoolT -> "BoolT"
+  | StringT -> "StringT"
+  | ObjectT(cls_name) -> Printf.sprintf "ObjectT(%s)" cls_name
+  | VoidT -> "VoidT"
+  | Unknown -> "Unknown"
 
 let string_of_jlite_op op =
   match op with
@@ -18,10 +25,14 @@ let string_of_jlite_op op =
   | ArithmeticOp s -> s
   | UnaryOp s -> s
 
+let string_of_typed_var_id (s, ty, i) =
+  Printf.sprintf "(%s, %s, %s)"
+    s (string_of_jlite_type ty) (string_of_int i)
+
 let string_of_var_id id =
   match id with
   | SimpleVarId s -> "SimpleVarId(" ^ s ^ ")"
-  | TypedVarId s -> Printf.sprintf "TypedVarId(%s)" s
+  | TypedVarId s -> Printf.sprintf "TypedVarId(%s)" (string_of_typed_var_id s)
 
 let rec string_of_jlite_expr expr =
   match expr with
@@ -55,20 +66,28 @@ let rec string_of_jlite_stmt stmt =
   | ReturnVoidStmt -> "ReturnVoidStmt"
   | _ -> failwith "string_of_jlite_stmt: OOPS"
 
-let string_of_var_decl var_decl = ""
+let string_of_var_decl (ty, id) =
+  Printf.sprintf "(%s %s)" (string_of_jlite_type ty) (string_of_var_id id)
 
-let string_of_arg_decl arg_decl = ""
+(* let string_of_arg_decl arg_decl = "" *)
 
-let string_of_md_decl { jliteid; ir3id; params; localvars; stmts } =
-  "md_decl { jliteid: " ^ string_of_var_id jliteid ^";\n" ^
-            "ir3id:" ^ string_of_var_id ir3id^ ";\n" ^
-            "params:" ^ string_of_list string_of_var_decl params ^ ";\n" ^
-            "localvars:" ^ string_of_list string_of_var_decl localvars ^ ";\n" ^
-            "stmts:" ^ string_of_list string_of_jlite_stmt stmts ^ ";\n" ^
+let string_of_md_decl { jliteid; ir3id; rettype; params; localvars; stmts } =
+  "md_decl { jliteid: " ^ string_of_var_id jliteid ^";\n\t" ^
+            "ir3id:" ^ string_of_var_id ir3id^ ";\n\t" ^
+            "rettype:" ^ string_of_jlite_type rettype ^ ";\n\t" ^
+            "params:" ^ string_of_list string_of_var_decl params ^ ";\n\t" ^
+            "localvars:" ^ string_of_list string_of_var_decl localvars ^ ";\n\t" ^
+            "stmts:" ^ string_of_list string_of_jlite_stmt stmts ^ ";\n\t" ^
           "}"
 
-let string_of_class_main cls_main = ""
+let string_of_class_main ~cls_main:(cls_name, main_md_decl) =
+  Printf.sprintf "MainClass(\n%s, \n%s)"
+    cls_name (string_of_md_decl main_md_decl)
 
-let string_of_class_decl cls_decl = ""
+let string_of_class_decl (cls_name, var_decls, md_decls) =
+  Printf.sprintf "ClassDecl(%s,\n%s,\n%s)" cls_name
+    (string_of_list string_of_var_decl var_decls) (string_of_list string_of_md_decl md_decls)
 
-let string_of_jlite_program prog = ""
+let string_of_jlite_program ~prog:(main_cls, classes) =
+  Printf.sprintf "Program(\n(%s),\n%s)"
+    (string_of_class_main ~cls_main:main_cls) (string_of_list string_of_class_decl classes)

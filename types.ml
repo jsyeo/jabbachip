@@ -16,7 +16,8 @@ type jlite_op =
 
 type var_id =
   | SimpleVarId of string
-  | TypedVarId of string
+  | TypedVarId of typed_var_id
+and typed_var_id = string * jlite_type * int
 
 type jlite_expr =
   | UnaryExpr of jlite_op * jlite_expr
@@ -47,6 +48,7 @@ and md_decl =
 {
   jliteid: var_id;
   mutable ir3id: var_id;
+  rettype: jlite_type;
   params: (var_decl list);
   localvars: (var_decl list);
   stmts: (jlite_stmt list)

@@ -17,7 +17,7 @@ let create_hashtable size initial_list =
   tbl
 
 let keyword_table =
-  create_hashtable 8 [
+  create_hashtable 11 [
     ("class", CLASS);
     ("if", IF);
     ("else", ELSE);
@@ -27,11 +27,20 @@ let keyword_table =
     ("new", NEW);
     ("null", NULL);
     ("println", PRINTLN);
-    ("readln", READLN)
+    ("readln", READLN);
+    ("main", MAIN)
+  ]
+
+let reserved_cname_table =
+  create_hashtable 4 [
+    ("Int", INT_TYPE);
+    ("Bool", BOOL_TYPE);
+    ("String", STRING_TYPE);
+    ("Void", VOID_TYPE)
   ]
 }
 
-let int = ['1'-'9']['0'-'9']*
+let int = ['0'-'9']
 let cname = ['A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*
 let id = ['a'-'z']['a'-'z' 'A'-'Z' '0'-'9' '_']*
 
@@ -42,8 +51,15 @@ rule token =
   parse
   | white         { token lexbuf}
   | newline       { next_line lexbuf; token lexbuf}
-  | int           { INT (int_of_string (Lexing.lexeme lexbuf))}
-  | cname as word { CNAME word }
+  | int+          { INT (int_of_string (Lexing.lexeme lexbuf))}
+  | cname as word
+      { try
+          let token = Hashtbl.find reserved_cname_table word in
+          printf "reserved cname: %s\n" word;
+          token
+        with Not_found ->
+          printf "cname: %s\n" word;
+          CNAME word }
   | "false"       { FALSE }
   | "true"        { TRUE }
   | id as word

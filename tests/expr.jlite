@@ -1,3 +1,16 @@
-a = 3;
-b = 10;
-c = a + b;
+class Main {
+  Void main(String args){
+    Int a;
+    return a;
+  }
+}
+class Expr{
+  Int test(Int b, String e) {
+    Int a;
+    a = 1;
+    return a;
+  }
+  Void fn() {
+     b = a + b;
+  }
+}

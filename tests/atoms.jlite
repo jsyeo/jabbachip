@@ -1,2 +1,17 @@
-a = this;
-b = new Box();
+class Main {
+  Void main(String args){
+    println(new Fib().fib(10));
+    return;
+  }
+}
+class Fib {
+  Int a;
+  Int b;
+  Int fib(Int n){
+    if ((n == 0) || (n == 1)) {
+        return n;
+    } else {
+        return fib(n-1) + fib(n-2);
+    }
+  }
+}

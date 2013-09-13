@@ -1,1 +1,20 @@
-size();
+class Main {
+  Void main(String args){
+    Int a;
+    Int b;
+    return;
+  }
+}
+class Mdcall
+{
+    Int b;
+    String f;
+    Void weird;
+    String heh(){
+        size();
+        return "HAHA";
+    }
+    Int add(Int a, Int b){
+        return a + b;
+    }
+}
