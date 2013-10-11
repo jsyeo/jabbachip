@@ -55,20 +55,20 @@ rule token =
   | cname as word
       { try
           let token = Hashtbl.find reserved_cname_table word in
-          printf "reserved cname: %s\n" word;
+          (* printf "reserved cname: %s\n" word; *)
           token
         with Not_found ->
-          printf "cname: %s\n" word;
+          (* printf "cname: %s\n" word; *)
           CNAME word }
   | "false"       { FALSE }
   | "true"        { TRUE }
   | id as word
       { try
           let token = Hashtbl.find keyword_table word in
-          printf "keyword: %s\n" word;
+          (* printf "keyword: %s\n" word; *)
           token
         with Not_found ->
-          printf "identifier: %s\n" word;
+          (* printf "identifier: %s\n" word; *)
           ID word
       }
   | '"'           { read_string (Buffer.create 17) lexbuf}
